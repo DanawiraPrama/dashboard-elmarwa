@@ -46,6 +46,7 @@ import {
   UserCheck,
   Award,
   BarChart2,
+  User,
 } from "lucide-react";
 
 const App = () => {
@@ -826,61 +827,104 @@ const App = () => {
           </div>
         )}
 
-        {/* --- TAB 3: DETAIL PROGRAM (Original Detail View) --- */}
+        {/* --- TAB 3: DETAIL PROGRAM (Revised Sidebar Layout) --- */}
         {activeTab === "details" && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in slide-in-from-bottom-4">
             {/* SIDEBAR LIST */}
-            <div className="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-[600px] flex flex-col">
-              <label className="flex items-center gap-2 text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest shrink-0">
-                <Filter size={14} /> Pilih Batch Keberangkatan
-              </label>
-              <div className="space-y-2 overflow-y-auto pr-2 flex-1 custom-scrollbar">
+            <div className="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-200 h-[650px] flex flex-col overflow-hidden">
+              <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+                <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest shrink-0">
+                  <Filter size={14} /> Pilih Batch Keberangkatan
+                </label>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
                 <button
                   onClick={() => setActiveProgram("ALL")}
-                  className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold transition-all flex justify-between items-center ${
+                  className={`w-full text-left p-3 rounded-xl transition-all border ${
                     activeProgram === "ALL"
-                      ? "bg-emerald-600 text-white shadow-lg"
-                      : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                      ? "bg-emerald-50 border-emerald-200 ring-1 ring-emerald-200 shadow-sm"
+                      : "bg-white border-slate-100 hover:border-emerald-200 hover:bg-slate-50"
                   }`}
                 >
-                  <span>Rata-rata Gabungan</span>
-                  {activeProgram === "ALL" && <CheckCircle size={16} />}
-                </button>
-                {rawData.map((p) => (
-                  <button
-                    key={p.program}
-                    onClick={() => setActiveProgram(p.program)}
-                    className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold transition-all group ${
-                      activeProgram === p.program
-                        ? "bg-white border-2 border-emerald-500 shadow-md"
-                        : "bg-slate-50 border-2 border-transparent hover:bg-slate-100"
-                    }`}
-                  >
-                    <div className="flex justify-between items-start">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          activeProgram === "ALL"
+                            ? "bg-emerald-100 text-emerald-600"
+                            : "bg-slate-100 text-slate-500"
+                        }`}
+                      >
+                        <BarChart2 size={16} />
+                      </div>
                       <div>
                         <span
-                          className={`block mb-1 ${
-                            activeProgram === p.program
-                              ? "text-emerald-700"
+                          className={`block text-sm font-bold ${
+                            activeProgram === "ALL"
+                              ? "text-emerald-800"
                               : "text-slate-700"
                           }`}
                         >
-                          {p.program.split("(")[0]}
+                          Rata-rata Gabungan
                         </span>
-                        <div className="flex items-center gap-1 text-[10px] text-slate-500 font-bold uppercase bg-slate-200 w-fit px-1.5 py-0.5 rounded">
-                          <Calendar size={10} />{" "}
-                          {p.program.includes("(")
-                            ? p.program.split("(")[1].replace(")", "")
-                            : "N/A"}
-                        </div>
+                        <span className="text-xs text-slate-400">
+                          Semua Data 2025
+                        </span>
                       </div>
+                    </div>
+                    {activeProgram === "ALL" && (
+                      <CheckCircle size={18} className="text-emerald-500" />
+                    )}
+                  </div>
+                </button>
+
+                {rawData.map((p, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveProgram(p.program)}
+                    className={`w-full text-left p-3 rounded-xl transition-all border group relative ${
+                      activeProgram === p.program
+                        ? "bg-white border-emerald-500 ring-1 ring-emerald-500 shadow-md z-10"
+                        : "bg-white border-slate-100 hover:border-emerald-300 hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <span
+                        className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                          activeProgram === p.program
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-slate-100 text-slate-500"
+                        }`}
+                      >
+                        {p.program.includes("(")
+                          ? p.program.split("(")[1].replace(")", "")
+                          : "N/A"}
+                      </span>
                       {p.note && (
-                        <div className="ml-2">
-                          {p.ratings.HotelMakkah < 2.5 ? (
-                            <AlertTriangle size={14} className="text-red-400" />
-                          ) : null}
-                        </div>
+                        <span className="flex items-center gap-1 text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded border border-red-100">
+                          <AlertTriangle size={10} /> Isu
+                        </span>
                       )}
+                    </div>
+
+                    <h4
+                      className={`text-sm font-bold mb-1 line-clamp-2 ${
+                        activeProgram === p.program
+                          ? "text-emerald-900"
+                          : "text-slate-700"
+                      }`}
+                    >
+                      {p.program.split("(")[0]}
+                    </h4>
+
+                    <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-50">
+                      <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                        <User size={10} />
+                      </div>
+                      <span className="text-xs text-slate-500 font-medium">
+                        {p.ustadz}
+                      </span>
                     </div>
                   </button>
                 ))}
